@@ -85,8 +85,111 @@ class AppContainer extends Component {
       });
   };
 
+  onDeleteUser = e => {
+    e.preventDefault();
+    const form = e.target;
+    const body = serialize(form, { hash: true });
+    const userToDelete = body.id;
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    // Set options, and stringify the body to JSON
+    const options = {
+      headers,
+      method: "DELETE"
+    };
+
+    this.setState({ isFetching: true });
+
+    fetch(`https://reqres.in/api/users${userToDelete}`, options)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+
+        return response;
+      })
+      .then(response => {
+        let newUserList = this.state.users.filter(user => {
+          return user.id.toString() !== userToDelete.toString();
+        });
+        this.setState({
+          isFetching: false,
+          users: newUserList
+        });
+      })
+      .catch(error => {
+        // Set error in state & log to console
+        console.log(error);
+        this.setState({
+          isFetching: false,
+          error
+        });
+      });
+  };
+
+  onEditUser = e => {
+    console.log(e);
+    const form = e.target;
+    const userToEdit = serialize(form, {hash: true});
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    const options = {
+      headers,
+      method: "PUT",
+      body: JSON.stringify(userToEdit)
+    };
+
+    this.setState({ isFetching: true });
+    fetch("https://reqres.in/api/users", options)
+      .then(response => {
+        // If response not okay, throw an error
+        if (!response.ok) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+
+        // Otherwise, extract the response into json
+        return response.json();
+      })
+      .then(json => {
+        // Update the user list and isFetching.
+        // Reset the form in a callback after state is set.
+        console.log(json);
+        let newUserList = this.state.users.filter(user => {
+          return user.id.toString() !== userToEdit.id.toString();
+        });
+        this.setState(
+          {
+            isFetching: false,
+            users: [...newUserList, json]
+          },
+          () => {
+            form.reset();
+          }
+        );
+      })
+      .catch(error => {
+        // Set error in state & log to console
+        console.log(error);
+        this.setState({
+          isFetching: false,
+          error
+        });
+      });
+  };
+
   render() {
-    return <App onAddUser={this.onAddUser} {...this.state} />;
+    return (
+      <App
+        onAddUser={this.onAddUser}
+        onDeleteUser={this.onDeleteUser}
+        onEditUser={this.onEditUser}
+        {...this.state}
+      />
+    );
   }
 }
 

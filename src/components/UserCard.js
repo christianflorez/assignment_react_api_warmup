@@ -1,21 +1,57 @@
-import React from "react";
+import React, { Component } from 'react';
+import UserDeleteButton from "./UserDeleteButton";
+import UserEditButton from "./UserEditButton";
 
-// Custom card component for each user's data
-const UserCard = ({ user }) => {
-  const { first_name, last_name, avatar } = user;
+class UserCard extends Component {
+  constructor() {
+    super();
 
-  // Set the CSS max-width attribute directly in the
-  // element. `style` accepts a JS object and the
-  // attributes use camelcase. See docs for more info.
-  // Also using new card class for Bootstrap 4.
-  return (
-    <div className="UserCard card" style={{ maxWidth: "128px" }}>
-      <img className="card-img-top img-fluid" src={avatar} alt="user avatar" />
-      <div className="card-block">
-        <h4>{first_name} {last_name}</h4>
+    this.state = {
+      editShow: null,
+    }
+  }
+
+  onChangeEditShow = e => {
+    e.preventDefault();
+
+    if (!this.state.editShow) {
+      this.setState({
+        editShow: true
+      });
+    } else {
+      this.setState({
+        editShow: null
+      });
+    }
+  };
+
+  onSubmitEdit = e => {
+    e.preventDefault();
+    this.setState({
+      editShow: null
+    });
+    this.props.onEditUser(e);
+  };
+
+  render() {
+    const { user, onDeleteUser } = this.props;
+    const { first_name, last_name, avatar, id } = user;
+    return(
+      <div className="UserCard card" style={{ maxWidth: "250px" }}>
+        <img className="card-img-top img-responsive" src={avatar} alt="user avatar" />
+        <div className="card-block">
+          <h4>{first_name} {last_name}</h4>
+          <UserDeleteButton id={id} onSubmit={onDeleteUser} />
+          <UserEditButton 
+            onChangeEditShow={this.onChangeEditShow}
+            show={this.state.editShow}
+            user={user}
+            onSubmit={this.onSubmitEdit}
+          />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default UserCard;
