@@ -16,13 +16,13 @@ const UserForm = ({ onSubmit, error, user }) => {
         </Alert>
       </Showable>
       <InputGroup name="first_name" labelText="First Name">
-        <Input name="first_name" placeholder={first_name}/>
+        <Input name="first_name" defaultValue={first_name}/>
       </InputGroup>
       <InputGroup name="last_name" labelText="Last Name">
-        <Input name="last_name" placeholder={last_name}/>
+        <Input name="last_name" defaultValue={last_name}/>
       </InputGroup>
       <InputGroup name="avatar" labelText="Photo Link">
-        <Input name="avatar" placeholder={avatar}/>
+        <Input name="avatar" defaultValue={avatar}/>
       </InputGroup>
       <Input name="id" type="hidden" value={id} />
       <Button type="submit" color="primary">Edit User</Button>
